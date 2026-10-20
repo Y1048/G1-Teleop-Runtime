@@ -18,6 +18,10 @@ python3 setup_g1.py
 
 ## 현재 상태
 
+**Quest IP 자동 탐지:** 설치 후 `python3 discover_quest.py`를 실행하세요.
+APK의 서버 주소는 G1 IP로 설정해야 합니다. IP 확인 후 실행 명령만 출력하며 모터는 시작하지 않습니다.
+[사용 안내](docs/QUEST_AUTO_IP_KO.md)
+
 **전달용 사전 릴리스입니다. clone만으로 로봇을 실행할 수 없습니다.**
 [Releases](https://github.com/Y1048/G1-Teleop-Runtime/releases)에서 실행 패키지와 보완 자료를 함께 받으세요.
 별도 복사본에서 무모터 격리 시작·종료를 확인했습니다. 실제 장치 전체 통합과 모터 검증은 하지 않았습니다.
