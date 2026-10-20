@@ -19,7 +19,7 @@ def command(root, bwrap):
         "--cap-drop", "ALL", "--ro-bind", "/", "/", "--proc", "/proc",
         "--dev", "/dev", "--tmpfs", "/tmp", "--tmpfs", "/run",
         "--tmpfs", "/home", "--bind", str(home), "/home/unitree",
-        "--clearenv", "--setenv", "HOME", "/home/unitree",
+        "--setenv", "HOME", "/home/unitree",
         "--setenv", "USER", "unitree", "--setenv", "PATH", "/usr/bin:/bin",
         "--setenv", "LANG", "C.UTF-8",
         "--chdir", "/home/unitree/sangmyeong_g1",
@@ -31,6 +31,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=pathlib.Path, required=True)
     parser.add_argument("--seconds", type=float, default=20)
+    parser.add_argument("--idle-valleg-fixture", action="store_true",
+                        help="Lifecycle only: replace physical Valleg with a no-input idle process")
     args = parser.parse_args()
     if os.name != "posix" or os.geteuid() == 0:
         raise SystemExit("Requires Linux, non-root user, working unprivileged bubblewrap")
@@ -49,13 +51,23 @@ def main():
         raise SystemExit("bubblewrap absent. STOP: no automatic install or unsafe fallback")
     # Probe the exact isolation flags first, without importing project code.
     argv = command(root, bwrap)
-    subprocess.run(argv[:-2] + ["/bin/true"], check=True, timeout=10)
+    if args.idle_valleg_fixture:
+        fixture = pathlib.Path(__file__).resolve().with_name("idle_valleg_fixture.py")
+        if not fixture.is_file():
+            raise SystemExit("Missing idle fixture")
+        index = argv.index("--chdir")
+        argv[index:index] = ["--ro-bind", str(fixture),
+                            "/home/unitree/sangmyeong_g1/tools/g1_valleg_gateway.py"]
+    # Ubuntu 20.04 bubblewrap predates --clearenv. Pass a clean environment
+    # to BOTH invocations instead; do not inherit PYTHONPATH/LD_PRELOAD/etc.
+    clean_env = {"PATH": "/usr/bin:/bin"}
+    subprocess.run(argv[:-2] + ["/bin/true"], check=True, timeout=10, env=clean_env)
     report = root / ("run_" + time.strftime("%Y%m%d_%H%M%S"))
     report.mkdir()
     forced = False
     with (report / "console.log").open("wb") as log:
         proc = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=log,
-                                stderr=subprocess.STDOUT, start_new_session=True)
+                                stderr=subprocess.STDOUT, start_new_session=True, env=clean_env)
         started = time.monotonic()
         try:
             while proc.poll() is None and time.monotonic() - started < args.seconds:
@@ -84,6 +96,7 @@ def main():
         "hardware_validation": False, "motor_process_excluded": True,
         "network_and_devices_isolated": True,
         "integration_pass": None,
+        "idle_valleg_fixture": args.idle_valleg_fixture,
         "note": "Inspect ALL component logs for readiness; exit zero alone is not integration PASS."
     }, indent=2))
     print(report)

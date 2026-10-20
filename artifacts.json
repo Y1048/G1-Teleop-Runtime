@@ -1,33 +1,29 @@
 {
-  "status": "preparation_only",
+  "status": "prerelease_isolated_lifecycle_checked",
   "artifacts": [
-    {
-      "name": "g1_distribution_core_binary_20261020_181743.tar.gz",
-      "bytes": 227064529,
-      "sha256": "9483a9bf9999c28a6c7634bd96e4665b7c36e30bd3db7cc423ef645993a11d15",
-      "uploaded": false,
-      "hash_evidence": "previous G1 package verification; not re-read this turn"
-    },
     {
       "name": "g1_core_binary_with_notices_20261020.tar.gz",
       "bytes": 242403775,
       "sha256": "53d82a68036925142b820a513c0cebb9454420a90cd18f8ef6d18927601a7cac",
-      "uploaded": false,
-      "hash_evidence": "previous G1 package verification; not re-read this turn"
+      "uploaded": false
     },
     {
       "name": "native_source_build_supplement_20261020.tar.gz",
       "bytes": 224232153,
       "sha256": "cd45e2a36bee3f74394ee02d389532bcf2cda35f3b872b66d79b6d599c2f44f6",
-      "uploaded": false,
-      "hash_evidence": "previous G1 package verification; not re-read this turn"
+      "uploaded": false
     },
     {
       "name": "remaining_native_build_records_20261020.tar.gz",
       "bytes": 94956677,
       "sha256": "7fac2558bf28e894c529bed2220181cebd2cd27a13ce106834f26bab3ac8082e",
-      "uploaded": false,
-      "hash_evidence": "previous G1 package verification; not re-read this turn"
+      "uploaded": false
+    },
+    {
+      "name": "validation_evidence.tar.gz",
+      "bytes": 85619,
+      "sha256": "77d8a60c6edde90e6a9b33192f10f3b421151cd74170cb454392d465da5dffc8",
+      "uploaded": false
     }
   ]
 }
