@@ -165,7 +165,7 @@ def install(payload, root, receipt, owner=None):
         raise RuntimeError("Installed tree verification failed")
 
 
-def environment():
+def environment(install_dependencies=False, report_dir=None):
     failures = []
     release = Path("/etc/os-release").read_text()
     l4t = Path("/etc/nv_tegra_release").read_text() if Path("/etc/nv_tegra_release").exists() else ""
@@ -180,18 +180,26 @@ def environment():
         failures.append("Run as unitree, not root")
     if not Path("/sys/class/net/eth0").exists():
         failures.append("eth0 missing")
-    for command in ("bwrap", "sudo", "bash", "pgrep", "sha256sum", "v4l2-ctl"):
+    # Base tooling and sudo cannot bootstrap themselves under this non-root entry.
+    for command in ("sudo", "bash", "pgrep", "sha256sum", "apt-get", "dpkg-query"):
         if not shutil.which(command):
             failures.append("Missing tool: " + command)
+    missing = {}
+    for command, package in (("bwrap", "bubblewrap"), ("v4l2-ctl", "v4l-utils"),
+                             ("ldd", "libc-bin")):
+        if not shutil.which(command):
+            missing[package] = None
     for package, prefix in (("libnvinfer8", "8.5.2"), ("cuda-cudart-11-4", "11.4")):
-        proc = subprocess.run(["dpkg-query", "-W", "-f=${Version}", package],
+        proc = subprocess.run(["dpkg-query", "-W", "-f=${Status}\t${Version}", package],
                               capture_output=True, text=True)
-        if proc.returncode or not proc.stdout.startswith(prefix):
-            failures.append("Missing/incompatible package: " + package)
+        if proc.returncode or proc.stdout.split("\t", 1)[0] not in ("install ok installed", "hold ok installed"):
+            missing[package] = prefix
+        elif not proc.stdout.split("\t", 1)[1].startswith(prefix):
+            failures.append("Existing incompatible package (will NOT change): " + package)
     try:
         __import__("numpy")
     except ImportError:
-        failures.append("System python3-numpy missing")
+        missing["python3-numpy"] = None
     targets = ("groot_balance_actuator", "g1_omni_heading_controller.py",
                "g1_teleop_server.py", "g1_bimanual_runtime.py")
     for cmd in Path("/proc").glob("[0-9]*/cmdline"):
@@ -203,6 +211,17 @@ def environment():
             pass
     if failures:
         raise RuntimeError("\n".join(failures) + "\nNo automatic OS/package changes performed.")
+    if missing:
+        if not install_dependencies:
+            raise RuntimeError("Missing packages (check-only does not install): " + ", ".join(missing))
+        # Load without depending on embedded/modified Python search paths.
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("system_dependencies", HERE / "system_dependencies.py")
+        deps = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(deps)
+        deps.install_missing(missing, report_dir / "system-dependencies")
+        importlib.invalidate_caches()
+        return environment(install_dependencies=False, report_dir=report_dir)
     # Namespace probe before downloads, privilege request or installation.
     subprocess.run(["bwrap", "--unshare-all", "--die-with-parent", "--new-session",
                     "--cap-drop", "ALL", "--ro-bind", "/", "/", "--proc", "/proc",
@@ -241,9 +260,9 @@ def main():
     args = parser.parse_args()
     if args.install_worker:
         return worker(args.install_worker.resolve())
-    environment()
     work = Path(tempfile.mkdtemp(prefix="g1-setup-", dir=str(Path.home())))
     print("Setup records:", work, flush=True)
+    environment(install_dependencies=not args.check_only, report_dir=work)
     records = json.loads((HERE / "artifacts.json").read_text())["artifacts"][:3]
     for record in records:
         dst = work / record["name"]
