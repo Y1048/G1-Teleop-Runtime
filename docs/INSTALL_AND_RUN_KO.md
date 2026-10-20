@@ -14,7 +14,7 @@
 | NVIDIA 환경 | CUDA 11.4, TensorRT 8.5.2, 커널 5.10.104-tegra |
 | 시스템 Python | 3.8.10. IK용 Python 3.11은 패키지에 별도로 포함 |
 | 인터페이스 | `eth0` |
-| Quest | 기존에 사용하던 호환 APK 설치. **이번 Release에는 APK가 없다** |
+| Quest | Release의 `apktest202610151729.apk` 설치. 다운로드·ADB 설치·G1 주소 설정은 저장소 README 3단계 참고 |
 | Valleg | 이 구성의 입력 장치. G1에 Bluetooth로 연결하고 조이스틱으로 인식되어야 함 |
 | 카메라 | Insta360 Link 2 Pro 연결 및 v4l2 장치 인식 |
 | 네트워크 | Quest와 G1이 서로 통신 가능한 주소·경로 |
