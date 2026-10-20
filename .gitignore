@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.tar.gz
+*.zip
+*.apk
+*.plan
+*.key
+.env
+reference/

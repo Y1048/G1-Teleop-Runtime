@@ -1,0 +1,29 @@
+2026-10-20 PC offline preparation validation
+
+Executed:
+Python 3.11 Windows, test_preparation.py: 5 tests PASS.
+- Known source SHA and removal of actuator invocation
+- Unknown startup revision rejected
+- Original cleanup implementation retained
+- Namespace isolation command flags present
+- Generated fixture copy preserves source bytes, removes actuator from COPY,
+  refuses existing destination and rejects source manifest corruption
+
+First run found an incorrect SHA literal in the new preparer. Corrected against
+the actual archived start_all.sh AND existing package manifest; rerun: 5 PASS.
+No change to original source or package.
+
+Reference source:
+SangMyeongG1 commit b3443455c8f33654f4def544f256de2098aa1b29
+start_all.sh SHA256 829428c5a379836b74972c3a2a00f30039d860a54aa71109922df7c5668fa8d8
+matches local package manifest for existing G1.
+
+NOT executed:
+SSH, hardware access, motor commands, Linux bubblewrap, full package copying,
+ARM64 startup, shutdown signals, PTY child cleanup, actual camera/Quest/Valleg/
+LowState, TensorRT inference, hardware integration.
+
+Tests use generated dummy package content and archived startup text.
+They do NOT establish successful full-stack startup or shutdown.
+Bubblewrap availability/unprivileged namespace support on G1 remains unknown.
+The runner refuses execution if unavailable; no unsafe fallback.

@@ -1,0 +1,62 @@
+G1 별도 경로 무모터 시작·종료 검증 준비 — 2026-10-20
+
+대상: 기존·새 G1 모두 동일 환경 (2026-10-20 사용자 확인).
+Ubuntu 20.04.6 / aarch64 / JetPack 5.1.1 / L4T R35.3.1 /
+커널 5.10.104-tegra / CUDA 11.4 / TensorRT 8.5.2 /
+Python 3.8.10 / PyTorch 2.0.0+nv23.05 / eth0.
+과거 새 G1의 TRT10 환경 정보는 이번 전달 대상의 기준으로 사용하지 않는다.
+이번 턴 로봇은 꺼져 있어 위 환경을 직접 재조회하지는 않았다.
+원본 설치, 모델, gain, 기존 배포 패키지를 변경하지 않는다.
+
+중요한 발견
+원본 NO_MOTORS=1은 C++ actuator만 생략한다. heading, server, IK,
+Valleg는 실행하며 /home/unitree/groot_onboard_runtime에 접근한다.
+따라서 패키지 staging의 start_all.sh를 그대로 실행하면 격리가 아니다.
+
+구성
+prepare.py: manifest 검증 후 새 경로에 COPY한다. 알고 있는 start_all.sh
+해시만 허용한다. 복사본의 actuator 실행 구간을 제거하고 actuator 파일과
+원본 start_all.sh/stop_motors.sh를 삭제한다. 원본은 다시 hash 검증한다.
+run_isolated.py: bubblewrap으로 홈 경로, PID, 네트워크, 장치를 격리한다.
+원래 /home은 가려지고 복사본만 /home/unitree로 보인다.
+호스트 OS 라이브러리는 읽기 전용이며 /dev에는 실제 장치가 없다.
+권한 상승 없이 namespace 생성이 실패하면 중단한다. 비격리 fallback은 없다.
+서버/IK/Valleg/heading을 시도하고 20초 후 Enter를 보내 원래 종료 경로를
+검사한다. 종료가 40초를 넘으면 본 검증 namespace만 강제 종료하고 실패로 기록한다.
+실제 모터 제어기에는 이 종료 방식을 사용하지 않는다.
+
+현재 준비 단계의 한계
+실제 ARM64 바이너리 실행, Linux namespace 실행, 전체 lifecycle은 아직 미검증.
+현재 PC에는 사용 가능한 WSL 배포판이 없어 bash/bubblewrap 실행검사를 하지 않았다.
+카메라/Valleg/LowState/Quest가 없는 격리 환경에서는 정상 ready가 아닐 수 있다.
+프로세스 exit 0 또는 'all stopped'만으로 통합 PASS라고 판정하지 않는다.
+이 구성은 통신 연결을 포함한 실물 전체 성공을 대신하지 않는다.
+실물 장치 연결 검사는 다음 별도 단계다.
+
+G1 전원이 켜진 후에만 진행할 절차 (이번에는 실행하지 않음)
+1. 이 폴더를 G1의 새 준비 폴더로 복사한다.
+2. command -v bwrap 로 확인. 없으면 중단하고 설치/지원 가능 여부부터 확인한다.
+   기존 환경 불변 원칙에 따라 자동 설치는 하지 않는다.
+3. 기존 배포 package root에서 manifest.json과 payload가 있는지 확인한다.
+4. 다음을 실행한다. 목적지는 반드시 없는 새 경로다.
+   python3 prepare.py --package /home/unitree/g1_distribution_core_binary_20261020_181743 --destination /home/unitree/g1_nomotor_isolated_trial_20261020
+5. python3 run_isolated.py --root /home/unitree/g1_nomotor_isolated_trial_20261020 --seconds 20
+6. run_*/console.log, result.json과 복사본 sangmyeong_g1/logs/run_*의
+   server.log/ik.log/valleg.log/heading.log를 모두 회수한다.
+   bind 실패, import 실패, 장치 없음, 정상종료, 강제종료를 구분한다.
+7. 원본 환경과 namespace 밖 PID/포트가 그대로인지 읽기 전용으로 확인한다.
+
+검증 결과 승인 기준
+- 원본 manifest 파일 hash 변화 없음
+- namespace 밖 신규 제어 프로세스/포트 없음
+- 모터 실행파일 호출 없음, 실제 NIC/장치 접근 없음
+- 구성요소별 실제 readiness 증거 또는 실패 원인 기록
+- Enter 후 자식/PTY/보조프로세스 종료 확인
+- 강제 종료된 경우 정상 lifecycle PASS 금지
+
+공동 작성자·소속기관 허용 범위는 사용자 확인 완료 (2026-10-20).
+이번 범위는 전달 준비이며 공개 배포 검토를 확대하지 않는다.
+외부 구성요소에 필요한 라이선스 고지/소스 제공 조건은 전달에도 적용될 수
+있으므로 이미 확보한 자료는 유지한다. 저작권 허용을 다시 묻지 않는다.
+이 패키지는 실기 구동 승인 문서가 아니다.
+reference/*.txt는 비실행 검토자료이며 공개 배포 대상이 아니다.
