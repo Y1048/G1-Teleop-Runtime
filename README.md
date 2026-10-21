@@ -2,9 +2,28 @@
 
 기존 개발 저장소와 분리된 G1 실행 패키지입니다. **핵심 C++ 소스·Unity 프로젝트는 포함하지 않습니다.** Python과 빌드된 제어기, 실행 자료를 전달하며 Quest APK는 아래 Release에서 받습니다.
 
-아래 명령은 **새 G1에 로그인한 `unitree` 계정의 터미널**에서 실행합니다. 설치기는 모터를 실행하지 않으며, 실제 모터 실행은 마지막 단계에서 직접 선택합니다.
+아래 명령은 **G1에 로그인한 `unitree` 계정의 터미널**에서 실행합니다. 설치기는 모터를 실행하지 않으며, 실제 모터 실행은 마지막 단계에서 직접 선택합니다.
 
-현재 전달본: **v0.1.1-pre.20261021 — 핵심 C++ 실행파일의 정적 심볼 제거본**. G1 격리 로더 비교와 모터 제외 시작·종료 검사를 통과했습니다. 2026-10-21 사용자가 기존 G1의 별도 설치 경로에서 `python3 run_separate.py motors`로 실기 실행하여 정상 동작했다고 확인했습니다. 같은 심볼 제거 배포본의 실기 성공 보고이며, 모든 새 장비의 동작을 보장하는 것은 아닙니다. [검증 상세](docs/STRIPPED_BINARY_20261021.md)
+현재 전달본: **v0.1.1-pre.20261021 — 핵심 C++ 실행파일의 정적 심볼 제거본**. G1 격리 로더 비교와 모터 제외 시작·종료 검사를 통과했습니다. 2026-10-21 사용자가 기존 G1의 별도 설치 경로에서 `python3 run_separate.py motors`로 실기 실행하여 정상 동작했다고 확인했습니다. 같은 심볼 제거 배포본의 실기 성공 보고이며, 모든 장비·환경의 동작을 보장하는 것은 아닙니다. [검증 상세](docs/STRIPPED_BINARY_20261021.md)
+
+## 시연: 이미 준비된 원본 G1에서 실행
+
+이번 시연은 **기존에 실기 동작을 확인한 원본 G1**을 사용합니다. 재설치하지 않고 준비된 별도 경로에서 실행하세요. 아래 명령은 PC 로컬이 아니라 **G1에 SSH 로그인한 터미널**에서 입력합니다.
+
+```bash
+cd /home/unitree/g1_runtime_stripped_20261021
+python3 run_separate.py check
+python3 run_separate.py motors
+```
+
+Quest APK를 실행하고 서버 주소를 현장에서 접근 가능한 G1 IP로 설정하세요. `motors`는 Quest IP를 자동 탐지한 뒤 `ACTUATE` 입력을 기다립니다. 입력하면 실제 모터 실행으로 진행합니다. 기존 제어기와 동시에 실행하지 마세요.
+
+종료는 같은 터미널에서 **Enter → `all stopped` 확인**입니다. 현재 종료 동작은 damping이며 자동 Regular/AI 복귀는 하지 않습니다.
+
+- 실행 로그: `/home/unitree/g1_runtime_stripped_20261021/package/payload/home/unitree/sangmyeong_g1/logs/`
+- 최종 명령 로그: `/home/unitree/g1_runtime_stripped_20261021/package/payload/home/unitree/groot_onboard_runtime/logs/command_observer/`
+- `run_separate.py`는 이 G1에 준비된 래퍼입니다. 저장소를 clone하는 것만으로 생성되지는 않습니다.
+- **아래 1~6절은 설치가 필요한 경우의 일반 절차**입니다. 현재 시연용 G1에는 `setup_g1.py`를 다시 실행하거나 일반 경로의 `start_all.sh`를 직접 실행할 필요가 없습니다.
 
 ## 1. 환경과 의존성 준비
 
@@ -93,7 +112,7 @@ G1의 주소 확인:
 ip -br addr
 ```
 
-Quest APK의 서버 주소에 **Quest에서 접근 가능한 이 G1의 IP**를 입력하고 APK를 실행하세요. Wi-Fi 연결이라면 보통 G1의 `wlan0` 주소를 사용합니다. 다른 G1에서도 주소가 같다고 가정하지 마세요.
+Quest APK의 서버 주소에 **Quest에서 접근 가능한 이 G1의 IP**를 입력하고 APK를 실행하세요. Wi-Fi 연결이라면 보통 G1의 `wlan0` 주소를 사용합니다. 시연 장소의 네트워크가 바뀌면 G1 주소도 다시 확인하세요.
 
 ```bash
 cd ~/G1-Teleop-Runtime
@@ -124,7 +143,7 @@ cd /home/unitree/sangmyeong_g1
 NO_MOTORS=0 ./start_all.sh QUEST_IP_HERE
 ```
 
-**5초 카운트다운 후 실제 모터가 활성화됩니다.** 기존 `--supervisor-off`, `--accept-handoff-risk` 옵션을 유지합니다. 설치 성공만으로 새 G1의 균형·추종 성능이 검증되는 것은 아닙니다.
+**5초 카운트다운 후 실제 모터가 활성화됩니다.** 기존 `--supervisor-off`, `--accept-handoff-risk` 옵션을 유지합니다. 설치 성공만으로 균형·추종 성능이 검증되는 것은 아닙니다.
 
 정상 종료는 같은 터미널에서 **Enter → `all stopped` 확인**입니다. 현재 구현은 actuator가 **damping 후 종료**하며 자동 Regular/AI 복귀나 모터 힘 유지를 보장하지 않습니다. 창의 X 버튼을 정상 종료로 사용하지 마세요.
 
@@ -141,11 +160,11 @@ NO_MOTORS=0 ./start_all.sh QUEST_IP_HERE
 - 배포 압축파일 SHA-256: `0d6abe0b1abf44d82cdc433f6032341b695209e4ba29d6cd70cbf70e6a2be8b6`
 - 핵심 C++ 실행파일 SHA-256: `dbde6b18a66b217f80f01f20c247fa8978d482b0a83d64f5f6a51081e99a4c5b`
 - `run_separate.py`는 기존 설치를 보존하기 위한 래퍼입니다. 별도 폴더를 선택한 뒤 **배포본의 동일한 `start_all.sh`와 C++ 실행파일**을 실행하며 제어 로직을 바꾸지 않습니다.
-- 새 G1의 일반 설치에서는 이 래퍼가 필요하지 않습니다. 위 README의 설치 및 `.sh` 실행 순서를 따르세요. `run_separate.py`는 원본 G1에 따로 준비한 도구이며 이 저장소의 일반 설치 명령이 아닙니다.
+- 원본 G1의 시연에서는 위 별도 경로 실행 방법을 사용합니다. 일반 설치용 `.sh` 실행 절차와 혼용하지 마세요.
 
 따라서 이 배포본은 기존 G1 환경에서 실기 실행 성공이 확인된 상태입니다. 다만 이는 **사용자의 운용 결과 보고**입니다. 이번 README 갱신에서 새 실기 로그를 회수하거나 추종 오차·지연·종료 동작을 항목별로 재측정하지는 않았습니다. Quest 자동 탐지 성공 여부도 별도 계측 결과로 주장하지 않습니다.
 
-자동 검사로는 별도 격리 복사본의 시작·ACK·종료, 설치 사전검사, 심볼 제거본 라이브러리 연결을 확인했습니다. **새 G1 전체 실설치 및 그 장비의 실기 동작은 아직 별도 확인이 필요합니다.** 동일한 기준 환경과 장치·네트워크 설정을 갖추고 위 순서대로 진행하세요.
+자동 검사로는 별도 격리 복사본의 시작·ACK·종료, 설치 사전검사, 심볼 제거본 라이브러리 연결을 확인했습니다. 현재 시연 대상은 실기 성공 보고가 있는 원본 G1입니다. 현장에서 장치나 네트워크 구성이 달라지면 해당 연결 상태를 다시 확인하세요.
 
 상세 자료: [자동 설치](docs/AUTO_SETUP_KO.md) · [Quest 탐지](docs/QUEST_AUTO_IP_KO.md) · [검증 기록](docs/ON_G1_VALIDATION_20261020.md) · [라이선스 고지](docs/LICENSING.md) · [실행 패키지 Release](https://github.com/Y1048/G1-Teleop-Runtime/releases/tag/v0.1.1-pre.20261021)
 
