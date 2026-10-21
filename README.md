@@ -4,6 +4,8 @@
 
 아래 명령은 **새 G1에 로그인한 `unitree` 계정의 터미널**에서 실행합니다. 설치기는 모터를 실행하지 않으며, 실제 모터 실행은 마지막 단계에서 직접 선택합니다.
 
+현재 전달본: **v0.1.1-pre.20261021 — 핵심 C++ 실행파일의 정적 심볼 제거본**. G1 격리 로더 비교와 모터 제외 시작·종료 검사를 통과했습니다. 실제 모터 재검증은 하지 않았습니다. [검증 상세](docs/STRIPPED_BINARY_20261021.md)
+
 ## 1. 환경과 의존성 준비
 
 | 구분 | 필요한 것 / 처리 방식 |
@@ -38,7 +40,7 @@ python3 setup_g1.py
 
 `sudo python3`로 시작하지 마세요. 필요한 단계에서 sudo 비밀번호를 요청합니다.
 
-환경 확인 → Release 다운로드·해시 검사 → 없는 의존성/파일 설치 → 라이브러리 연결 검사 → **별도 격리 복사본에서 30초 시작·종료 검사**까지 자동으로 진행합니다. Release 파일을 따로 수동 다운로드할 필요는 없습니다. 기존 파일이 다르면 덮어쓰지 않고 중단합니다.
+환경 확인 → Release 다운로드·해시 검사 → 없는 의존성/파일 설치 → 라이브러리 연결 검사 → **별도 격리 복사본에서 30초 시작·종료 검사**까지 자동으로 진행합니다. Release 파일을 따로 수동 다운로드할 필요는 없습니다. 기존 파일이 다르면 덮어쓰지 않고 중단합니다. 이전 버전이 이미 설치돼 있다면 실행파일·시작 스크립트 충돌로 중단할 수 있습니다. 이번 설치기는 기존 운용 환경을 자동 교체하는 업데이터가 아닙니다.
 
 다음 문구가 나오면 자동 준비가 끝난 것입니다:
 
@@ -50,9 +52,9 @@ INSTALL + ISOLATED LIFECYCLE COMPLETE. Motor controller NOT executed.
 
 ## 3. Quest APK 설치 (PC에서 처음 한 번)
 
-[Quest APK 다운로드 — apktest202610151729.apk](https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.0-pre.20261020/apktest202610151729.apk)
+[Quest APK 다운로드 — apktest202610151729.apk](https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.1-pre.20261021/apktest202610151729.apk)
 
-기존 SangMyeongG1 APK를 재빌드 없이 제공합니다. Unity Editor는 필요하지 않습니다. G1 설치 스크립트가 Quest에 APK를 자동 설치하지는 않습니다.
+기존 전달용 APK를 재빌드 없이 제공합니다. Unity Editor는 필요하지 않습니다. G1 설치 스크립트가 Quest에 APK를 자동 설치하지는 않습니다.
 
 1. Quest의 개발자 모드·손 추적을 켭니다. USB로 PC에 연결하고 헤드셋에서 USB 디버깅을 허용합니다.
 2. PC에 [Android SDK Platform Tools](https://developer.android.com/tools/releases/platform-tools)를 받아 압축을 풉니다.
@@ -81,7 +83,7 @@ APK SHA-256:
 28591c1fde91110f6ecfee5694ab541fe8787ed6b313d81a1163eba7a23630c7
 ```
 
-원본: `geegum/SangMyeongG1` 커밋 `b3443455c8f33654f4def544f256de2098aa1b29`의 `apk/apktest202610151729.apk`. APK 압축 무결성과 전달본 해시를 확인했으며, 이번 작업에서 Quest 설치·착용 검사는 하지 않았습니다.
+전달본 식별: `apktest202610151729.apk`와 위 SHA-256을 사용합니다. 비공개 개발 저장소에 접근할 필요가 없습니다. APK 압축 무결성과 전달본 해시를 확인했으며, 이번 작업에서 Quest 설치·착용 검사는 하지 않았습니다.
 
 ## 4. Quest IP 자동 탐지
 
@@ -134,6 +136,6 @@ NO_MOTORS=0 ./start_all.sh QUEST_IP_HERE
 
 기존 G1에서 별도 격리 복사본의 시작·ACK·종료와 설치 사전검사를 확인했습니다. 새 G1 전체 실설치·모터 동작과 실제 Quest IP 탐지는 아직 미검증입니다. 2026-10-20 G1에서 탐지 프로그램 시작·입력 없이 timeout 종료·UDP 5020 반환은 확인했습니다.
 
-상세 자료: [자동 설치](docs/AUTO_SETUP_KO.md) · [Quest 탐지](docs/QUEST_AUTO_IP_KO.md) · [검증 기록](docs/ON_G1_VALIDATION_20261020.md) · [라이선스 고지](docs/LICENSING.md) · [실행 패키지 Release](https://github.com/Y1048/G1-Teleop-Runtime/releases/tag/v0.1.0-pre.20261020)
+상세 자료: [자동 설치](docs/AUTO_SETUP_KO.md) · [Quest 탐지](docs/QUEST_AUTO_IP_KO.md) · [검증 기록](docs/ON_G1_VALIDATION_20261020.md) · [라이선스 고지](docs/LICENSING.md) · [실행 패키지 Release](https://github.com/Y1048/G1-Teleop-Runtime/releases/tag/v0.1.1-pre.20261021)
 
 핵심 C++/Unity 원문 소스는 포함하지 않지만 역공학 불가능을 보장하지는 않습니다.

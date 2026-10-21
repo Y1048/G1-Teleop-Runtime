@@ -49,12 +49,13 @@ python3 -c 'import numpy; print(numpy.__version__)'
 mkdir "$HOME/g1_handoff_20261020"
 cd "$HOME/g1_handoff_20261020"
 
-base=https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.0-pre.20261020
+base=https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.1-pre.20261021
 for file in \
-  g1_core_binary_with_notices_20261020.tar.gz \
+  g1_core_binary_stripped_20261021.tar.gz \
   native_source_build_supplement_20261020.tar.gz \
   remaining_native_build_records_20261020.tar.gz \
   validation_evidence.tar.gz \
+  stripped_g1_validation_20261021.tar.gz \
   SHA256SUMS.txt
 do
   curl --fail --location --output "$file" "$base/$file" || break
@@ -63,7 +64,7 @@ done
 sha256sum -c SHA256SUMS.txt
 ```
 
-**네 개 아카이브가 모두 `OK`여야 다음으로 진행한다.**
+**받은 아카이브가 모두 `OK`여야 다음으로 진행한다.**
 외부 인터넷을 쓸 수 없다면 다른 PC에서 동일 파일을 다운로드해 USB로 옮기고,
 G1에서 같은 해시 검사를 한다.
 
@@ -71,7 +72,7 @@ G1에서 같은 해시 검사를 한다.
 
 ```bash
 mkdir unpacked
-tar -xzf g1_core_binary_with_notices_20261020.tar.gz -C unpacked
+tar -xzf g1_core_binary_stripped_20261021.tar.gz -C unpacked
 ```
 
 `unpacked/payload/`는 설치 경로의 복제본이다.

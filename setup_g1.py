@@ -15,8 +15,8 @@ import tempfile
 import urllib.request
 
 HERE = Path(__file__).resolve().parent
-ARCHIVE = "g1_core_binary_with_notices_20261020.tar.gz"
-ARCHIVE_SHA = "53d82a68036925142b820a513c0cebb9454420a90cd18f8ef6d18927601a7cac"
+ARCHIVE = "g1_core_binary_stripped_20261021.tar.gz"
+ARCHIVE_SHA = "0d6abe0b1abf44d82cdc433f6032341b695209e4ba29d6cd70cbf70e6a2be8b6"
 
 
 def sha(path):

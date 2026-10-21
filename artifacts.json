@@ -1,12 +1,12 @@
 {
-  "status": "prerelease_isolated_lifecycle_checked",
+  "status": "stripped_elf_loader_and_isolated_lifecycle_checked",
   "artifacts": [
     {
-      "name": "g1_core_binary_with_notices_20261020.tar.gz",
-      "bytes": 242403775,
-      "sha256": "53d82a68036925142b820a513c0cebb9454420a90cd18f8ef6d18927601a7cac",
+      "name": "g1_core_binary_stripped_20261021.tar.gz",
+      "bytes": 224023950,
+      "sha256": "0d6abe0b1abf44d82cdc433f6032341b695209e4ba29d6cd70cbf70e6a2be8b6",
       "uploaded": true,
-      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.0-pre.20261020/g1_core_binary_with_notices_20261020.tar.gz",
+      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.1-pre.20261021/g1_core_binary_stripped_20261021.tar.gz",
       "github_digest_verified": true
     },
     {
@@ -14,7 +14,7 @@
       "bytes": 224232153,
       "sha256": "cd45e2a36bee3f74394ee02d389532bcf2cda35f3b872b66d79b6d599c2f44f6",
       "uploaded": true,
-      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.0-pre.20261020/native_source_build_supplement_20261020.tar.gz",
+      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.1-pre.20261021/native_source_build_supplement_20261020.tar.gz",
       "github_digest_verified": true
     },
     {
@@ -22,7 +22,7 @@
       "bytes": 94956677,
       "sha256": "7fac2558bf28e894c529bed2220181cebd2cd27a13ce106834f26bab3ac8082e",
       "uploaded": true,
-      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.0-pre.20261020/remaining_native_build_records_20261020.tar.gz",
+      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.1-pre.20261021/remaining_native_build_records_20261020.tar.gz",
       "github_digest_verified": true
     },
     {
@@ -30,9 +30,17 @@
       "bytes": 85619,
       "sha256": "77d8a60c6edde90e6a9b33192f10f3b421151cd74170cb454392d465da5dffc8",
       "uploaded": true,
-      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.0-pre.20261020/validation_evidence.tar.gz",
+      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.1-pre.20261021/validation_evidence.tar.gz",
+      "github_digest_verified": true
+    },
+    {
+      "name": "stripped_g1_validation_20261021.tar.gz",
+      "bytes": 2641,
+      "sha256": "34c1a475fbb7fe7eb968b74990ebed4d226f14bbe4388a20cbd9dce1a6c3b31b",
+      "uploaded": true,
+      "url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/download/v0.1.1-pre.20261021/stripped_g1_validation_20261021.tar.gz",
       "github_digest_verified": true
     }
   ],
-  "release_url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/tag/v0.1.0-pre.20261020"
+  "release_url": "https://github.com/Y1048/G1-Teleop-Runtime/releases/tag/v0.1.1-pre.20261021"
 }

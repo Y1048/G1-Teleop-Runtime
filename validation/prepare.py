@@ -5,7 +5,7 @@ import json
 import pathlib
 import shutil
 
-START_SHA = "829428c5a379836b74972c3a2a00f30039d860a54aa71109922df7c5668fa8d8"
+START_SHA = "7421f93b86d6edb234b36917ffd3b2de4c3867e5ef2eebc8f312c5cb9b6d2b04"
 BEGIN = 'say "[4/5] GROOT binary check"'
 END = "echo\nsay \"GROOT running."
 
